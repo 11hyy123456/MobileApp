@@ -8,8 +8,44 @@
       "password": "$2a$10$Pegcjn9mQLkYjPdIbfCDgO/ivjYf6E/x7gyk4ph8V9Sg2vIcIsd1y"
     }
   ],
-  "categories": [],
-  "notes": [],
+  "categories": [
+    {
+      "id": "morhl308n99uc5lerf",
+      "createdAt": "2026-05-04T17:41:50.072Z",
+      "updatedAt": "2026-05-04T17:41:50.072Z",
+      "userId": "mordmqvbtyocc6drs2n",
+      "name": "高等数学",
+      "color": "#ed6a0c"
+    }
+  ],
+  "notes": [
+    {
+      "id": "morham369gnzfu8oo08",
+      "createdAt": "2026-05-04T17:33:41.587Z",
+      "updatedAt": "2026-05-04T17:42:09.992Z",
+      "isDeleted": false,
+      "userId": "mordmqvbtyocc6drs2n",
+      "title": "高等数学：导数与微分",
+      "content": "1. 导数的定义\n函数 y = f(x) 在点 x₀ 处的导数：\n\ntext\nf'(x₀) = lim(Δx→0) [f(x₀+Δx) - f(x₀)] / Δx\n几何意义：该点切线的斜率\n\n2. 基本求导公式\n函数\t导数\nx^n\tn·x^(n-1)\ne^x\te^x\nln x\t1",
+      "categoryId": "morhl308n99uc5lerf",
+      "summary": "1. 导数的定义\n函数 y = f(x) 在点 x₀ 处的导数：\n\ntext\nf'(x₀) = lim(Δx→0) [f(x₀+Δx) - f(x₀)] / Δx\n几何意义：该点切线的斜率\n\n2. 基本求导公式\n函数\t导数\nx^n\tn·x^(n-1)\ne^x\te^x\nln x\t1",
+      "nextReviewAt": "2026-05-04T17:33:41.586Z",
+      "reviewCount": 0
+    },
+    {
+      "id": "morheqwaqmurthipw9",
+      "createdAt": "2026-05-04T17:36:54.442Z",
+      "updatedAt": "2026-05-04T17:41:57.491Z",
+      "isDeleted": false,
+      "userId": "mordmqvbtyocc6drs2n",
+      "title": "高等数学：定积分",
+      "content": "1. 定积分的定义\n设函数 f(x) 在区间 [a, b] 上有定义，将区间分成 n 个小区间，取近似求和后取极限：\n\ntext\n∫[a, b] f(x) dx = lim(n→∞) Σ(i=1 to n) f(ξᵢ) · Δxᵢ\n几何意义： 曲线 y = f(x) 与 x 轴之",
+      "categoryId": "morhl308n99uc5lerf",
+      "summary": "1. 定积分的定义\n设函数 f(x) 在区间 [a, b] 上有定义，将区间分成 n 个小区间，取近似求和后取极限：\n\ntext\n∫[a, b] f(x) dx = lim(n→∞) Σ(i=1 to n) f(ξᵢ) · Δxᵢ\n几何意义： 曲线 y = f(x) 与 x 轴之",
+      "nextReviewAt": "2026-05-04T17:36:54.442Z",
+      "reviewCount": 0
+    }
+  ],
   "tags": [],
   "noteTags": [],
   "reviews": []

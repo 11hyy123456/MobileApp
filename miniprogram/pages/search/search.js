@@ -6,21 +6,29 @@ Page({
 
   onSearchInput(e) {
     const keyword = e.detail.value;
+    console.log('Search input:', keyword);
     this.setData({ keyword });
     if (keyword.trim()) { this.doSearch(keyword); }
   },
 
-  doSearch: debounce((keyword) => {
+  doSearch: debounce(function(keyword) {
+    console.log('doSearch called with:', keyword);
     this.performSearch(keyword);
   }, 300),
 
   async performSearch(keyword) {
+    console.log('performSearch called with:', keyword);
     this.setData({ loading: true });
     try {
+      console.log('Calling API with keyword:', keyword);
       const res = await api.notes.list({ keyword, page: 1, pageSize: 50 });
+      console.log('Search results:', res);
       const results = res.data.list.map(note => ({ ...note, formattedDate: formatDate(note.createdAt) }));
       this.setData({ results, total: res.data.total });
-    } catch (error) { showError('搜索失败'); }
+    } catch (error) {
+      console.error('Search error:', error);
+      showError('搜索失败');
+    }
     finally { this.setData({ loading: false }); }
   },
 

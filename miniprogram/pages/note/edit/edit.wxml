@@ -17,7 +17,7 @@
   </view>
 
   <view class="editor-section">
-    <textarea class="editor" placeholder="使用Markdown编写笔记内容..." value="{{content}}" bindinput="onContentInput" />
+    <textarea class="editor" placeholder="使用Markdown编写笔记内容..." value="{{content}}" bindinput="onContentInput" adjust-position="true" cursor-spacing="20" />
   </view>
 
   <view class="bottom-bar">

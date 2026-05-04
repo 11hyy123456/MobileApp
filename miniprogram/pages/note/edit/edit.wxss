@@ -1,13 +1,13 @@
 .container {
   min-height: 100vh;
   background: #fff;
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 120rpx;
 }
 
 .form-section {
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #eee;
+  border-bottom: none;  /* 移除边框，让视觉更连贯 */
+  background: #fff;
 }
 
 .title-input {
@@ -56,17 +56,22 @@
 
 .editor-section {
   flex: 1;
-  min-height: 400rpx;
+  width: 100%;
+  margin-top: 0;  /* 移除负边距，让它紧贴上面 */
+  padding: 0;     /* 移除内边距 */
 }
 
 .editor {
   width: 100%;
-  min-height: 500rpx;
-  padding: 24rpx 32rpx;
+  min-height: 600rpx;
+  padding: 24rpx 32rpx;  /* 保持和 form-section 一样的内边距 */
   font-size: 30rpx;
   line-height: 1.8;
   color: #333;
   box-sizing: border-box;
+  border: none;
+  background: #f8f9fa;
+  margin: 0;  /* 确保没有外边距 */
 }
 
 .bottom-bar {
@@ -77,6 +82,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 100;
 }
 
 .save-btn {

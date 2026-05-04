@@ -43,6 +43,15 @@ Page({
     try {
       const notesRes = await api.notes.list({ page: 1, pageSize: 5 });
       const categoriesRes = await api.categories.list();
+      
+      let dueReviewCount = 0;
+      try {
+        const dueReviewsRes = await api.notes.dueReviews();
+        dueReviewCount = dueReviewsRes.data ? dueReviewsRes.data.length : 0;
+        console.log('Due reviews:', dueReviewsRes.data);
+      } catch (e) {
+        console.error('Failed to fetch due reviews:', e);
+      }
 
       const recentNotes = notesRes.data.list.map(note => ({
         ...note,
@@ -52,12 +61,13 @@ Page({
       this.setData({
         stats: {
           noteCount: notesRes.data.total,
-          dueReviewCount: 0,
+          dueReviewCount: dueReviewCount,
           categoryCount: categoriesRes.data.length,
           reviewStreak: 7
         },
         recentNotes
       });
+      console.log('Stats updated:', this.data.stats);
     } catch (error) {
       console.error('Load data failed:', error);
     }

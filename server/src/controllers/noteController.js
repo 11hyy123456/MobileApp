@@ -255,9 +255,17 @@ exports.getDueReviews = async (req, res, next) => {
     const userId = req.user.id;
     const now = new Date().toISOString();
 
-    const notes = Note.findByUserId(userId).filter(n =>
+    console.log('getDueReviews - userId:', userId, 'now:', now);
+    
+    const userNotes = Note.findByUserId(userId);
+    console.log('getDueReviews - userNotes count:', userNotes.length);
+    console.log('getDueReviews - userNotes:', userNotes.map(n => ({ id: n.id, title: n.title, nextReviewAt: n.nextReviewAt, isDeleted: n.isDeleted })));
+
+    const notes = userNotes.filter(n =>
       !n.isDeleted && n.nextReviewAt && n.nextReviewAt <= now
     );
+    
+    console.log('getDueReviews - due notes count:', notes.length);
 
     notes.sort((a, b) => new Date(a.nextReviewAt) - new Date(b.nextReviewAt));
 
