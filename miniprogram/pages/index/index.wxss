@@ -9,7 +9,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 40rpx 32rpx;
-  color: #fff;
 }
 
 .greeting {
@@ -20,20 +19,23 @@
 .title {
   font-size: 48rpx;
   font-weight: 600;
+  color: black;
 }
 
 .subtitle {
   font-size: 28rpx;
   margin-top: 8rpx;
   opacity: 0.9;
+  color: black;
 }
 
 .avatar {
-  width: 80rpx;
-  height: 80rpx;
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
   background: #fff;
   overflow: hidden;
+  margin-left: 40rpx;
 }
 
 .avatar image {
@@ -43,10 +45,12 @@
 
 .stats {
   display: flex;
+  width: 100%;
   background: #fff;
-  margin: 0 32rpx;
-  border-radius: 16rpx;
+  margin: 0;
+  border-radius: 0;
   padding: 32rpx 0;
+  box-sizing: border-box;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
 }
 
@@ -75,10 +79,12 @@
 }
 
 .quick-actions {
-  margin: 32rpx;
+  width: 100%;
+  margin: 0;
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 0;
   padding: 32rpx;
+  box-sizing: border-box;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
 }
 

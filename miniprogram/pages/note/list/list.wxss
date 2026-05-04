@@ -10,6 +10,9 @@
   padding: 20rpx 32rpx;
   background: #fff;
   gap: 20rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .search-input-wrap {
@@ -76,7 +79,7 @@
 }
 
 .notes-section {
-  padding: 24rpx 32rpx;
+  padding: 24rpx 0;
 }
 
 .section-header {
@@ -98,8 +101,9 @@
 .note-card {
   background: #fff;
   border-radius: 16rpx;
-  padding: 28rpx;
+  padding: 28rpx 32rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  margin: 0 24rpx 24rpx;
 }
 
 .note-header {
