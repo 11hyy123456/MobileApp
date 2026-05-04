@@ -1,15 +1,18 @@
-const { Tag, Note } = require('../models');
+const Tag = require('../models/Tag');
+const Note = require('../models/Note');
+const db = require('../db');
 
 exports.createTag = async (req, res, next) => {
   try {
     const { name, color } = req.body;
+    const userId = req.user.id;
 
-    const existingTag = await Tag.findOne({ where: { name } });
+    const existingTag = db.db.tags.find(t => t.name === name && t.userId === userId);
     if (existingTag) {
       return res.status(409).json({ code: 409, message: '标签已存在' });
     }
 
-    const tag = await Tag.create({ name, color });
+    const tag = Tag.create({ name, color, userId });
 
     res.status(201).json({
       code: 201,
@@ -23,20 +26,17 @@ exports.createTag = async (req, res, next) => {
 
 exports.getTags = async (req, res, next) => {
   try {
-    const tags = await Tag.findAll({
-      include: [{
-        model: Note,
-        as: 'notes',
-        where: { isDeleted: false },
-        required: false
-      }],
-      order: [['createdAt', 'DESC']]
-    });
+    const userId = req.user.id;
+    const tags = Tag.findByUserId(userId);
 
-    const result = tags.map(tag => ({
-      ...tag.toJSON(),
-      noteCount: tag.notes ? tag.notes.length : 0
-    }));
+    const result = tags.map(tag => {
+      const noteIds = db.db.noteTags.filter(nt => nt.tagId == tag.id).map(nt => nt.noteId);
+      const notes = Note.findByUserId(userId).filter(n => noteIds.includes(n.id) && !n.isDeleted);
+      return {
+        ...tag,
+        noteCount: notes.length
+      };
+    });
 
     res.json({
       code: 200,
@@ -51,13 +51,16 @@ exports.getTags = async (req, res, next) => {
 exports.deleteTag = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
 
-    const tag = await Tag.findByPk(id);
-    if (!tag) {
+    const tag = Tag.findById(id);
+    if (!tag || tag.userId != userId) {
       return res.status(404).json({ code: 404, message: '标签不存在' });
     }
 
-    await tag.destroy();
+    db.db.noteTags = db.db.noteTags.filter(nt => nt.tagId != id);
+    db.saveDB();
+    Tag.delete(id);
 
     res.json({
       code: 200,
@@ -75,33 +78,26 @@ exports.getNotesByTag = async (req, res, next) => {
     const userId = req.user.id;
     const { page = 1, pageSize = 10 } = req.query;
 
-    const offset = (page - 1) * pageSize;
-    const limit = parseInt(pageSize);
-
-    const tag = await Tag.findByPk(id, {
-      include: [{
-        model: Note,
-        as: 'notes',
-        where: { userId, isDeleted: false },
-        required: false
-      }]
-    });
-
-    if (!tag) {
+    const tag = Tag.findById(id);
+    if (!tag || tag.userId != userId) {
       return res.status(404).json({ code: 404, message: '标签不存在' });
     }
 
-    const notes = tag.notes.slice(offset, offset + limit);
+    const noteIds = db.db.noteTags.filter(nt => nt.tagId == id).map(nt => nt.noteId);
+    const notes = Note.findByUserId(userId).filter(n => noteIds.includes(n.id) && !n.isDeleted);
+
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+    const paginatedNotes = notes.slice(offset, offset + parseInt(pageSize));
 
     res.json({
       code: 200,
       message: '获取成功',
       data: {
         tag,
-        notes,
-        total: tag.notes.length,
+        notes: paginatedNotes,
+        total: notes.length,
         page: parseInt(page),
-        pageSize: limit
+        pageSize: parseInt(pageSize)
       }
     });
   } catch (error) {

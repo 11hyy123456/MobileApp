@@ -1,6 +1,6 @@
 App({
   globalData: {
-    apiBaseUrl: 'http://localhost:3000',
+    apiBaseUrl: 'http://192.168.29.1:3000',
     token: null,
     userInfo: null
   },

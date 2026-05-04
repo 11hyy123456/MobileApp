@@ -1,56 +1,39 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
 const bcrypt = require('bcryptjs');
+const db = require('../db');
 
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  username: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    unique: true
-  },
-  phone: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    unique: true
-  },
-  password: {
-    type: DataTypes.STRING(255),
-    allowNull: false
-  },
-  avatar: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    defaultValue: ''
-  }
-}, {
-  tableName: 'users',
-  hooks: {
-    beforeCreate: async (user) => {
-      if (user.password) {
-        user.password = await bcrypt.hash(user.password, 10);
-      }
-    },
-    beforeUpdate: async (user) => {
-      if (user.changed('password')) {
-        user.password = await bcrypt.hash(user.password, 10);
-      }
+const User = {
+  async create(userData) {
+    if (!userData.username || !userData.password) {
+      throw new Error('Username and password are required');
     }
+    const existingUser = db.User.findByUsername(userData.username);
+    if (existingUser) {
+      throw new Error('Username already exists');
+    }
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const user = db.User.create({
+      ...userData,
+      password: hashedPassword
+    });
+    return user;
+  },
+
+  async findById(id) {
+    return db.User.findById(id);
+  },
+
+  async findByUsername(username) {
+    return db.User.findByUsername(username);
+  },
+
+  async comparePassword(user, candidatePassword) {
+    return bcrypt.compare(candidatePassword, user.password);
+  },
+
+  toJSON(user) {
+    const { password, ...result } = user;
+    return result;
   }
-});
-
-User.prototype.comparePassword = async function(candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
-User.prototype.toJSON = function() {
-  const values = Object.assign({}, this.get());
-  delete values.password;
-  return values;
 };
 
 module.exports = User;

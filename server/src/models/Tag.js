@@ -1,24 +1,39 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../db');
 
-const Tag = sequelize.define('Tag', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+const Tag = {
+  create(data) {
+    if (!data.name) {
+      throw new Error('Tag name is required');
+    }
+    return db.Tag.create(data);
   },
-  name: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    unique: true
+
+  findById(id) {
+    return db.Tag.findById(id);
   },
-  color: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    defaultValue: '#07c160'
+
+  findAll(userId) {
+    if (userId) {
+      return db.Tag.findByUserId(userId);
+    }
+    return db.Tag.findAll();
+  },
+
+  findByUserId(userId) {
+    return db.Tag.findByUserId(userId);
+  },
+
+  findOrCreate(name, userId) {
+    return db.Tag.findOrCreate(name, userId);
+  },
+
+  update(id, data) {
+    return db.Tag.update(id, data);
+  },
+
+  delete(id) {
+    return db.Tag.delete(id);
   }
-}, {
-  tableName: 'tags'
-});
+};
 
 module.exports = Tag;

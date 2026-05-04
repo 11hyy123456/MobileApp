@@ -1,5 +1,8 @@
-const { Note, Category, Tag, Review, User } = require('../models');
-const { Op } = require('sequelize');
+const Note = require('../models/Note');
+const Category = require('../models/Category');
+const Tag = require('../models/Tag');
+const Review = require('../models/Review');
+const db = require('../db');
 
 const EBINGHAUS_INTERVALS = [1, 2, 4, 7, 15, 30];
 
@@ -8,31 +11,31 @@ exports.createNote = async (req, res, next) => {
     const { title, content, categoryId, tagIds, summary, coverImage } = req.body;
     const userId = req.user.id;
 
-    const note = await Note.create({
+    const note = Note.create({
       userId,
       title,
       content,
       categoryId,
       summary: summary || (content ? content.substring(0, 200) : ''),
       coverImage,
-      nextReviewAt: new Date()
+      nextReviewAt: new Date().toISOString(),
+      reviewCount: 0
     });
 
     if (tagIds && tagIds.length > 0) {
-      await note.setTags(tagIds);
+      tagIds.forEach(tagId => {
+        db.db.noteTags.push({
+          noteId: note.id,
+          tagId: tagId
+        });
+      });
+      db.saveDB();
     }
-
-    const fullNote = await Note.findByPk(note.id, {
-      include: [
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags' }
-      ]
-    });
 
     res.status(201).json({
       code: 201,
       message: '笔记创建成功',
-      data: fullNote
+      data: note
     });
   } catch (error) {
     next(error);
@@ -44,39 +47,46 @@ exports.getNotes = async (req, res, next) => {
     const userId = req.user.id;
     const { page = 1, pageSize = 10, categoryId, tagId, keyword, isDeleted } = req.query;
 
-    const where = { userId };
-    if (categoryId) where.categoryId = categoryId;
-    if (isDeleted !== undefined) where.isDeleted = isDeleted === 'true';
-    if (keyword) {
-      where[Op.or] = [
-        { title: { [Op.like]: `%${keyword}%` } },
-        { content: { [Op.like]: `%${keyword}%` } }
-      ];
+    let notes = Note.findByUserId(userId);
+
+    if (isDeleted === 'true') {
+      notes = notes.filter(n => n.isDeleted);
+    } else if (isDeleted !== 'true') {
+      notes = notes.filter(n => !n.isDeleted);
     }
 
-    const offset = (page - 1) * pageSize;
-    const limit = parseInt(pageSize);
+    if (categoryId) {
+      notes = notes.filter(n => n.categoryId == categoryId);
+    }
 
-    const { count, rows } = await Note.findAndCountAll({
-      where,
-      include: [
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags' }
-      ],
-      order: [['createdAt', 'DESC']],
-      offset,
-      limit
-    });
+    if (tagId) {
+      const noteIds = db.db.noteTags.filter(nt => nt.tagId == tagId).map(nt => nt.noteId);
+      notes = notes.filter(n => noteIds.includes(n.id));
+    }
+
+    if (keyword) {
+      const kw = keyword.toLowerCase();
+      notes = notes.filter(n =>
+        n.title.toLowerCase().includes(kw) ||
+        (n.content && n.content.toLowerCase().includes(kw))
+      );
+    }
+
+    notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const total = notes.length;
+    const offset = (parseInt(page) - 1) * parseInt(pageSize);
+    const paginatedNotes = notes.slice(offset, offset + parseInt(pageSize));
 
     res.json({
       code: 200,
       message: '获取成功',
       data: {
-        list: rows,
-        total: count,
+        list: paginatedNotes,
+        total: total,
         page: parseInt(page),
-        pageSize: limit,
-        totalPages: Math.ceil(count / limit)
+        pageSize: parseInt(pageSize),
+        totalPages: Math.ceil(total / parseInt(pageSize))
       }
     });
   } catch (error) {
@@ -89,20 +99,8 @@ exports.getNote = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    const note = await Note.findOne({
-      where: { id, userId },
-      include: [
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags' },
-        {
-          model: Review,
-          as: 'reviews',
-          order: [['reviewAt', 'DESC']]
-        }
-      ]
-    });
-
-    if (!note) {
+    const note = Note.findById(id);
+    if (!note || note.userId != userId) {
       return res.status(404).json({ code: 404, message: '笔记不存在' });
     }
 
@@ -122,34 +120,32 @@ exports.updateNote = async (req, res, next) => {
     const userId = req.user.id;
     const { title, content, categoryId, tagIds, summary, coverImage } = req.body;
 
-    const note = await Note.findOne({ where: { id, userId } });
-    if (!note) {
+    const note = Note.findById(id);
+    if (!note || note.userId != userId) {
       return res.status(404).json({ code: 404, message: '笔记不存在' });
     }
 
-    if (title !== undefined) note.title = title;
-    if (content !== undefined) note.content = content;
-    if (categoryId !== undefined) note.categoryId = categoryId;
-    if (summary !== undefined) note.summary = summary;
-    if (coverImage !== undefined) note.coverImage = coverImage;
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (content !== undefined) updateData.content = content;
+    if (categoryId !== undefined) updateData.categoryId = categoryId;
+    if (summary !== undefined) updateData.summary = summary;
+    if (coverImage !== undefined) updateData.coverImage = coverImage;
 
-    await note.save();
+    const updatedNote = Note.update(id, updateData);
 
     if (tagIds !== undefined) {
-      await note.setTags(tagIds);
+      db.db.noteTags = db.db.noteTags.filter(nt => nt.noteId != id);
+      tagIds.forEach(tagId => {
+        db.db.noteTags.push({ noteId: id, tagId: tagId });
+      });
+      db.saveDB();
     }
-
-    const fullNote = await Note.findByPk(note.id, {
-      include: [
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags' }
-      ]
-    });
 
     res.json({
       code: 200,
       message: '更新成功',
-      data: fullNote
+      data: updatedNote
     });
   } catch (error) {
     next(error);
@@ -162,16 +158,17 @@ exports.deleteNote = async (req, res, next) => {
     const userId = req.user.id;
     const { permanent } = req.query;
 
-    const note = await Note.findOne({ where: { id, userId } });
-    if (!note) {
+    const note = Note.findById(id);
+    if (!note || note.userId != userId) {
       return res.status(404).json({ code: 404, message: '笔记不存在' });
     }
 
     if (permanent === 'true') {
-      await note.destroy({ force: true });
+      Note.permanentDelete(id);
+      db.db.noteTags = db.db.noteTags.filter(nt => nt.noteId != id);
+      db.saveDB();
     } else {
-      note.isDeleted = true;
-      await note.save();
+      Note.softDelete(id);
     }
 
     res.json({
@@ -189,18 +186,17 @@ exports.recoverNote = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    const note = await Note.findOne({ where: { id, userId, isDeleted: true } });
-    if (!note) {
+    const note = Note.findById(id);
+    if (!note || note.userId != userId || !note.isDeleted) {
       return res.status(404).json({ code: 404, message: '回收站笔记不存在' });
     }
 
-    note.isDeleted = false;
-    await note.save();
+    const recoveredNote = Note.recover(id);
 
     res.json({
       code: 200,
       message: '恢复成功',
-      data: note
+      data: recoveredNote
     });
   } catch (error) {
     next(error);
@@ -211,21 +207,21 @@ exports.reviewNote = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { effect, notes } = req.body;
+    const { effect, notes: reviewNotes } = req.body;
 
-    const note = await Note.findOne({ where: { id, userId } });
-    if (!note) {
+    const note = Note.findById(id);
+    if (!note || note.userId != userId) {
       return res.status(404).json({ code: 404, message: '笔记不存在' });
     }
 
-    const review = await Review.create({
+    const review = Review.create({
       noteId: id,
-      reviewAt: new Date(),
+      userId,
+      reviewAt: new Date().toISOString(),
       effect,
-      notes
+      notes: reviewNotes,
+      nextReviewAt: null
     });
-
-    note.reviewCount += 1;
 
     const currentReviewIndex = EBINGHAUS_INTERVALS.indexOf(
       EBINGHAUS_INTERVALS.find(interval => {
@@ -238,14 +234,16 @@ exports.reviewNote = async (req, res, next) => {
     const nextInterval = EBINGHAUS_INTERVALS[currentReviewIndex] || EBINGHAUS_INTERVALS[EBINGHAUS_INTERVALS.length - 1];
     const nextReviewDate = new Date();
     nextReviewDate.setDate(nextReviewDate.getDate() + nextInterval);
-    note.nextReviewAt = nextReviewDate;
 
-    await note.save();
+    Note.update(id, {
+      nextReviewAt: nextReviewDate.toISOString(),
+      reviewCount: (note.reviewCount || 0) + 1
+    });
 
     res.json({
       code: 200,
       message: '复习记录已保存',
-      data: { review, nextReviewAt: note.nextReviewAt }
+      data: { review, nextReviewAt: nextReviewDate.toISOString() }
     });
   } catch (error) {
     next(error);
@@ -255,21 +253,13 @@ exports.reviewNote = async (req, res, next) => {
 exports.getDueReviews = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    const now = new Date().toISOString();
 
-    const notes = await Note.findAll({
-      where: {
-        userId,
-        isDeleted: false,
-        nextReviewAt: {
-          [Op.lte]: new Date()
-        }
-      },
-      include: [
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags' }
-      ],
-      order: [['nextReviewAt', 'ASC']]
-    });
+    const notes = Note.findByUserId(userId).filter(n =>
+      !n.isDeleted && n.nextReviewAt && n.nextReviewAt <= now
+    );
+
+    notes.sort((a, b) => new Date(a.nextReviewAt) - new Date(b.nextReviewAt));
 
     res.json({
       code: 200,

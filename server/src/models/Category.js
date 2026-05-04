@@ -1,33 +1,35 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../db');
 
-const Category = sequelize.define('Category', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+const Category = {
+  create(data) {
+    if (!data.name) {
+      throw new Error('Category name is required');
+    }
+    return db.Category.create(data);
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: 'user_id'
+
+  findById(id) {
+    return db.Category.findById(id);
   },
-  name: {
-    type: DataTypes.STRING(100),
-    allowNull: false
+
+  findAll(userId) {
+    if (userId) {
+      return db.Category.findByUserId(userId);
+    }
+    return db.Category.findAll();
   },
-  color: {
-    type: DataTypes.STRING(20),
-    allowNull: true,
-    defaultValue: '#1989fa'
+
+  findByUserId(userId) {
+    return db.Category.findByUserId(userId);
   },
-  icon: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-    defaultValue: 'notes'
+
+  update(id, data) {
+    return db.Category.update(id, data);
+  },
+
+  delete(id) {
+    return db.Category.delete(id);
   }
-}, {
-  tableName: 'categories'
-});
+};
 
 module.exports = Category;

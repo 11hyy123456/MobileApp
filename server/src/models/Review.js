@@ -1,36 +1,36 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../db');
 
-const Review = sequelize.define('Review', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  noteId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: 'note_id'
-  },
-  reviewAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    field: 'review_at'
-  },
-  effect: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 1,
-      max: 5
+const Review = {
+  create(data) {
+    if (!data.noteId) {
+      throw new Error('Note ID is required');
     }
+    return db.Review.create(data);
   },
-  notes: {
-    type: DataTypes.TEXT,
-    allowNull: true
+
+  findById(id) {
+    return db.Review.findById(id);
+  },
+
+  findAll() {
+    return db.Review.findAll();
+  },
+
+  findByNoteId(noteId) {
+    return db.Review.findByNoteId(noteId);
+  },
+
+  findDueReviews(userId) {
+    return db.Review.findDueReviews(userId);
+  },
+
+  update(id, data) {
+    return db.Review.update(id, data);
+  },
+
+  delete(id) {
+    return db.Review.delete(id);
   }
-}, {
-  tableName: 'reviews'
-});
+};
 
 module.exports = Review;

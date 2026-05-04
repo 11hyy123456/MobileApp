@@ -1,61 +1,47 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../db');
 
-const Note = sequelize.define('Note', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+const Note = {
+  create(data) {
+    if (!data.title) {
+      throw new Error('Note title is required');
+    }
+    return db.Note.create(data);
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: 'user_id'
+
+  findById(id) {
+    return db.Note.findById(id);
   },
-  categoryId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    field: 'category_id'
+
+  findAll(userId) {
+    if (userId) {
+      return db.Note.findByUserId(userId);
+    }
+    return db.Note.findAll();
   },
-  title: {
-    type: DataTypes.STRING(200),
-    allowNull: false
+
+  findByUserId(userId) {
+    return db.Note.findByUserId(userId);
   },
-  content: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    defaultValue: ''
+
+  findDeleted(userId) {
+    return db.Note.findDeleted();
   },
-  summary: {
-    type: DataTypes.STRING(500),
-    allowNull: true,
-    defaultValue: ''
+
+  update(id, data) {
+    return db.Note.update(id, data);
   },
-  coverImage: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    field: 'cover_image',
-    defaultValue: ''
+
+  softDelete(id) {
+    return db.Note.softDelete(id);
   },
-  isDeleted: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-    field: 'is_deleted'
+
+  recover(id) {
+    return db.Note.recover(id);
   },
-  nextReviewAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-    field: 'next_review_at'
-  },
-  reviewCount: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-    field: 'review_count'
+
+  permanentDelete(id) {
+    return db.Note.permanentDelete(id);
   }
-}, {
-  tableName: 'notes'
-});
+};
 
 module.exports = Note;

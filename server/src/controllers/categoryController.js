@@ -1,12 +1,12 @@
-const { Category, Note } = require('../models');
-const { Op } = require('sequelize');
+const Category = require('../models/Category');
+const Note = require('../models/Note');
 
 exports.createCategory = async (req, res, next) => {
   try {
     const { name, color, icon } = req.body;
     const userId = req.user.id;
 
-    const category = await Category.create({ userId, name, color, icon });
+    const category = Category.create({ userId, name, color, icon });
 
     res.status(201).json({
       code: 201,
@@ -21,22 +21,15 @@ exports.createCategory = async (req, res, next) => {
 exports.getCategories = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    const categories = Category.findByUserId(userId);
 
-    const categories = await Category.findAll({
-      where: { userId },
-      include: [{
-        model: Note,
-        as: 'notes',
-        where: { isDeleted: false },
-        required: false
-      }],
-      order: [['createdAt', 'ASC']]
+    const result = categories.map(cat => {
+      const notes = Note.findByUserId(userId).filter(n => n.categoryId == cat.id && !n.isDeleted);
+      return {
+        ...cat,
+        noteCount: notes.length
+      };
     });
-
-    const result = categories.map(cat => ({
-      ...cat.toJSON(),
-      noteCount: cat.notes ? cat.notes.length : 0
-    }));
 
     res.json({
       code: 200,
@@ -54,21 +47,22 @@ exports.updateCategory = async (req, res, next) => {
     const userId = req.user.id;
     const { name, color, icon } = req.body;
 
-    const category = await Category.findOne({ where: { id, userId } });
-    if (!category) {
+    const category = Category.findById(id);
+    if (!category || category.userId != userId) {
       return res.status(404).json({ code: 404, message: '分类不存在' });
     }
 
-    if (name !== undefined) category.name = name;
-    if (color !== undefined) category.color = color;
-    if (icon !== undefined) category.icon = icon;
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (color !== undefined) updateData.color = color;
+    if (icon !== undefined) updateData.icon = icon;
 
-    await category.save();
+    const updatedCategory = Category.update(id, updateData);
 
     res.json({
       code: 200,
       message: '更新成功',
-      data: category
+      data: updatedCategory
     });
   } catch (error) {
     next(error);
@@ -80,13 +74,17 @@ exports.deleteCategory = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    const category = await Category.findOne({ where: { id, userId } });
-    if (!category) {
+    const category = Category.findById(id);
+    if (!category || category.userId != userId) {
       return res.status(404).json({ code: 404, message: '分类不存在' });
     }
 
-    await Note.update({ categoryId: null }, { where: { categoryId: id } });
-    await category.destroy();
+    const notes = Note.findByUserId(userId).filter(n => n.categoryId == id);
+    notes.forEach(note => {
+      Note.update(note.id, { categoryId: null });
+    });
+
+    Category.delete(id);
 
     res.json({
       code: 200,
