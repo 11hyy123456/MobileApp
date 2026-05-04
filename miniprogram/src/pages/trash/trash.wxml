@@ -1,0 +1,34 @@
+<!-- 回收站页面 -->
+<!-- 功能说明：展示已删除的笔记，支持恢复和永久删除 -->
+
+<view class="container">
+  <view class="header">
+    <text class="title">回收站</text>
+    <text class="subtitle">已删除的笔记可以在此恢复</text>
+  </view>
+
+  <view class="trash-list" wx:if="{{trashNotes.length > 0}}">
+    <view class="trash-card" wx:for="{{trashNotes}}" wx:key="id">
+      <view class="card-content">
+        <text class="note-title">{{item.title}}</text>
+        <text class="note-date">删除于 {{item.formattedDeleteDate}}</text>
+      </view>
+      <view class="card-actions">
+        <view class="action-btn recover" bindtap="recoverNote" data-id="{{item.id}}">
+          <text>🔄</text>
+          <text class="action-text">恢复</text>
+        </view>
+        <view class="action-btn delete" bindtap="permanentDelete" data-id="{{item.id}}">
+          <text>🗑️</text>
+          <text class="action-text">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{trashNotes.length === 0}}">
+    <text class="empty-icon">🗑️</text>
+    <text class="empty-text">回收站是空的</text>
+    <text class="empty-hint">删除的笔记会出现在这里</text>
+  </view>
+</view>

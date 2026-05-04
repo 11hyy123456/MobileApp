@@ -1,0 +1,70 @@
+<!-- 个人中心页面 -->
+<!-- 功能说明：展示用户个人信息、统计信息，提供设置、回收站入口 -->
+
+<view class="container">
+  <view class="profile-header">
+    <view class="avatar-section">
+      <view class="avatar">
+        <image src="{{userInfo.avatar || '/assets/icons/profile.png'}}" mode="aspectFill" />
+      </view>
+      <view class="user-info">
+        <text class="username">{{userInfo.username}}</text>
+        <text class="join-date">加入于 {{joinDate}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stat-card">
+      <text class="stat-value">{{stats.noteCount}}</text>
+      <text class="stat-label">笔记</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value">{{stats.categoryCount}}</text>
+      <text class="stat-label">分类</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value">{{stats.reviewCount}}</text>
+      <text class="stat-label">复习次数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value">{{stats.streak}}</text>
+      <text class="stat-label">连续天数</text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" bindtap="goToTrash">
+      <text class="menu-icon">🗑️</text>
+      <text class="menu-text">回收站</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToCategories">
+      <text class="menu-icon">📁</text>
+      <text class="menu-text">分类管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToTags">
+      <text class="menu-icon">🏷️</text>
+      <text class="menu-text">标签管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" bindtap="editProfile">
+      <text class="menu-icon">✏️</text>
+      <text class="menu-text">编辑资料</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="showAbout">
+      <text class="menu-icon">ℹ️</text>
+      <text class="menu-text">关于</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="handleLogout">退出登录</button>
+  </view>
+</view>

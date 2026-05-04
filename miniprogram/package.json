@@ -1,0 +1,10 @@
+{
+  "name": "studynotes-miniprogram",
+  "version": "1.0.0",
+  "description": "StudyNotes WeChat Mini Program",
+  "main": "src/pages/index/index.js",
+  "dependencies": {
+    "mobx-mini": "^2.8.0",
+    "flyio": "^0.6.14"
+  }
+}

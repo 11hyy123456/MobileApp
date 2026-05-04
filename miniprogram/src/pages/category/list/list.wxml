@@ -1,0 +1,44 @@
+<!-- 分类管理页面 -->
+<!-- 功能说明：管理笔记分类，支持创建、编辑、删除分类 -->
+
+<view class="container">
+  <view class="header">
+    <text class="title">分类管理</text>
+    <text class="subtitle">整理你的笔记分类</text>
+  </view>
+
+  <view class="category-list" wx:if="{{categories.length > 0}}">
+    <view class="category-card" wx:for="{{categories}}" wx:key="id">
+      <view class="category-info">
+        <view class="category-icon" style="background-color: {{item.color}}20; color: {{item.color}}">
+          <text>📁</text>
+        </view>
+        <view class="category-detail">
+          <text class="category-name">{{item.name}}</text>
+          <text class="category-count">{{item.noteCount || 0}} 篇笔记</text>
+        </view>
+      </view>
+      <view class="category-actions">
+        <view class="action-btn" bindtap="editCategory" data-id="{{item.id}}" data-name="{{item.name}}" data-color="{{item.color}}">
+          <text>✏️</text>
+        </view>
+        <view class="action-btn delete" bindtap="deleteCategory" data-id="{{item.id}}">
+          <text>🗑️</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{categories.length === 0}}">
+    <text class="empty-icon">📂</text>
+    <text class="empty-text">还没有分类</text>
+    <text class="empty-hint">创建分类来整理你的笔记</text>
+  </view>
+
+  <view class="add-section">
+    <button class="add-btn" bindtap="showAddCategory">
+      <text class="add-icon">+</text>
+      <text>新建分类</text>
+    </button>
+  </view>
+</view>
