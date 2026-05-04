@@ -1,0 +1,25 @@
+<!-- 搜索页面 -->
+<view class="container">
+  <view class="search-header">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索笔记..." value="{{keyword}}" bindinput="onSearchInput" focus="true" />
+    </view>
+    <text class="cancel-btn" bindtap="goBack">取消</text>
+  </view>
+
+  <view class="results-section" wx:if="{{results.length > 0}}">
+    <text class="results-count">找到 {{total}} 条结果</text>
+    <view class="result-list">
+      <view class="result-card" wx:for="{{results}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+        <text class="result-title">{{item.title}}</text>
+        <text class="result-excerpt">{{item.summary}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-results" wx:if="{{keyword && results.length === 0 && !loading}}">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">未找到相关笔记</text>
+  </view>
+</view>

@@ -1,0 +1,37 @@
+<!-- 笔记详情页面 -->
+<!-- 功能说明：展示笔记完整内容，支持Markdown渲染，提供编辑、删除功能 -->
+
+<view class="container" wx:if="{{note}}">
+  <view class="header">
+    <text class="category-tag" wx:if="{{note.category}}" style="background-color: {{note.category.color}}">
+      {{note.category.name}}
+    </text>
+    <text class="title">{{note.title}}</text>
+    <view class="meta">
+      <text class="date">{{note.formattedDate}}</text>
+    </view>
+  </view>
+
+  <view class="content">
+    <text class="markdown-text">{{note.content}}</text>
+  </view>
+
+  <view class="tags-section" wx:if="{{note.tags && note.tags.length > 0}}">
+    <text class="tag" wx:for="{{note.tags}}" wx:key="id">{{item.name}}</text>
+  </view>
+
+  <view class="action-bar">
+    <view class="action-item" bindtap="goToEdit">
+      <text class="action-icon">✏️</text>
+      <text class="action-text">编辑</text>
+    </view>
+    <view class="action-item" bindtap="deleteNote">
+      <text class="action-icon">🗑️</text>
+      <text class="action-text">删除</text>
+    </view>
+  </view>
+</view>
+
+<view class="loading-state" wx:if="{{!note && loading}}">
+  <text>加载中...</text>
+</view>

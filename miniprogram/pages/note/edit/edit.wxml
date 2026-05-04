@@ -1,0 +1,26 @@
+<!-- 笔记编辑页面 -->
+<!-- 功能说明：创建和编辑笔记，支持Markdown编辑 -->
+
+<view class="container">
+  <view class="form-section">
+    <input class="title-input" placeholder="输入笔记标题..." value="{{title}}" bindinput="onTitleInput" />
+
+    <view class="category-section">
+      <text class="section-label">分类</text>
+      <scroll-view class="category-scroll" scroll-x="true">
+        <view class="category-chips">
+          <view class="chip {{selectedCategoryId === 0 ? 'active' : ''}}" bindtap="selectCategory" data-id="0">无</view>
+          <view class="chip {{selectedCategoryId === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="selectCategory" data-id="{{item.id}}">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="editor-section">
+    <textarea class="editor" placeholder="使用Markdown编写笔记内容..." value="{{content}}" bindinput="onContentInput" />
+  </view>
+
+  <view class="bottom-bar">
+    <button class="save-btn" bindtap="saveNote" loading="{{saving}}">保存笔记</button>
+  </view>
+</view>

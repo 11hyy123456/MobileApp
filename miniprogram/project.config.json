@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./",
   "projectname": "StudyNotes",
-  "appid": "touristappid",
+  "appid": "wxf1ff4595a34fdb3b",
   "setting": {
     "urlCheck": false,
     "es6": true,
@@ -37,7 +37,14 @@
     "minifyWXSS": true,
     "showES6CompileOption": false,
     "minifyWXML": true,
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "libVersion": "2.25.0",
@@ -65,5 +72,10 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
   }
 }

@@ -1,0 +1,56 @@
+<!-- 笔记列表页面 -->
+<!-- 功能说明：展示用户所有笔记，支持分类筛选、标签筛选、搜索 -->
+
+<view class="container">
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索笔记..." value="{{keyword}}" bindinput="onSearchInput" />
+    </view>
+    <view class="filter-btn" bindtap="toggleFilter">
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <view class="filter-section" wx:if="{{showFilter}}">
+    <view class="filter-title">分类</view>
+    <scroll-view class="filter-scroll" scroll-x="true">
+      <view class="filter-chips">
+        <view class="chip {{selectedCategoryId === 0 ? 'active' : ''}}" bindtap="selectCategory" data-id="0">全部</view>
+        <view class="chip {{selectedCategoryId === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="selectCategory" data-id="{{item.id}}">{{item.name}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="notes-section">
+    <view class="section-header">
+      <text class="section-title">我的笔记 ({{total}})</text>
+    </view>
+
+    <view class="note-list" wx:if="{{notes.length > 0}}">
+      <view class="note-card" wx:for="{{notes}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+        <view class="note-header">
+          <text class="note-title">{{item.title}}</text>
+          <view class="note-category" wx:if="{{item.category}}" style="background-color: {{item.category.color}}20; color: {{item.category.color}}">{{item.category.name}}</view>
+        </view>
+        <text class="note-content">{{item.summary || '暂无内容'}}</text>
+        <view class="note-footer">
+          <text class="note-date">{{item.formattedDate}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{notes.length === 0 && !loading}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无笔记</text>
+    </view>
+
+    <view class="loading-more" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="goToEdit">
+    <text class="add-icon">+</text>
+  </view>
+</view>
