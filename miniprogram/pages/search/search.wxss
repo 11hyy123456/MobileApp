@@ -1,5 +1,5 @@
-.container { min-height: 100vh; background: #f5f5f5; }
-.search-header { display: flex; align-items: center; padding: 20rpx 32rpx; background: #fff; gap: 20rpx; }
+.container { min-height: 100vh; background: #f5f5f5; padding-top: 88rpx; }
+.search-header { display: flex; align-items: center; padding: 20rpx 24rpx; background: #fff; gap: 20rpx; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
 .search-input-wrap { flex: 1; display: flex; align-items: center; background: #f5f5f5; border-radius: 32rpx; padding: 0 24rpx; height: 72rpx; }
 .search-icon { font-size: 32rpx; margin-right: 12rpx; }
 .search-input { flex: 1; font-size: 28rpx; }

@@ -1,124 +1,140 @@
-.container {
-  min-height: 100vh;
-  background: #f5f5f5;
-  padding-bottom: 40rpx;
+.container { 
+  min-height: 100vh; 
+  background: #f5f5f5; 
+  padding-bottom: 40rpx; 
 }
 
-.header {
-  background: linear-gradient(135deg, #1989fa 0%, #07c160 100%);
-  padding: 48rpx 32rpx;
-  color: #fff;
+.header { 
+  width: 80%; 
+  background: linear-gradient(135deg, #1989fa 0%, #07c160 100%); 
+  padding: 48rpx 20rpx; 
+  color: #fff; 
+  box-sizing: border-box;
+  border-radius: 32rpx; /* 添加圆角 */
+  margin: 20rpx auto 0; /* 添加自动边距实现居中 */
 }
 
-.title {
-  display: block;
-  font-size: 44rpx;
-  font-weight: 600;
-  margin-bottom: 8rpx;
+.title { 
+  display: block; 
+  font-size: 44rpx; 
+  font-weight: 600; 
+  margin-bottom: 8rpx; 
 }
 
-.subtitle {
-  font-size: 28rpx;
-  opacity: 0.9;
+.subtitle { 
+  font-size: 28rpx; 
+  opacity: 0.9; 
 }
 
-.stats-card {
-  display: flex;
-  background: #fff;
-  margin: -40rpx 24rpx 32rpx;
-  border-radius: 16rpx;
-  padding: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+.stats-card { 
+  width: 80%; 
+  display: flex; 
+  background: #fff; 
+  margin: -40rpx auto 32rpx; /* 修改为 auto 实现居中 */
+  padding: 32rpx 20rpx; 
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1); 
+  box-sizing: border-box;
+  border-radius: 24rpx; /* 添加圆角 */
 }
 
-.stat-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.stat-item { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
 }
 
-.stat-value {
-  font-size: 48rpx;
-  font-weight: 600;
-  color: #1989fa;
+.stat-value { 
+  font-size: 48rpx; 
+  font-weight: 600; 
+  color: #1989fa; 
 }
 
-.stat-label {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 8rpx;
+.stat-label { 
+  font-size: 24rpx; 
+  color: #999; 
+  margin-top: 8rpx; 
 }
 
-.section {
-  padding: 0;
-  margin-top: 32rpx;
+.section { 
+  width: 80%; 
+  padding: 0; 
+  margin: 32rpx auto 0; /* 修改为 auto 实现居中 */
+  box-sizing: border-box; 
 }
 
-.section-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 24rpx;
-  padding: 0 24rpx;
+.section-title { 
+  width: 100%; 
+  font-size: 32rpx; 
+  font-weight: 600; 
+  color: #333; 
+  margin-bottom: 24rpx; 
+  padding: 0 20rpx; 
+  box-sizing: border-box; 
 }
 
-.review-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-  padding: 0 24rpx;
+.review-list { 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20rpx; 
+  padding: 0; 
+  box-sizing: border-box; 
 }
 
-.review-card {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 28rpx 32rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+.review-card { 
+  width: 100%; 
+  background: #fff; 
+  padding: 28rpx 20rpx; 
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05); 
+  box-sizing: border-box;
+  border-radius: 20rpx; /* 添加圆角 */
 }
 
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12rpx;
+.review-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 12rpx; 
 }
 
-.note-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
+.note-title { 
+  font-size: 32rpx; 
+  font-weight: 600; 
+  color: #333; 
 }
 
-.due-badge {
-  background: #ff4d4f;
-  color: #fff;
-  padding: 6rpx 16rpx;
-  border-radius: 8rpx;
+.due-badge { 
+  background: #ff4d4f; 
+  color: #fff; 
+  padding: 6rpx 12rpx; 
   font-size: 22rpx;
+  border-radius: 16rpx; /* 添加圆角 */
 }
 
-.due-date {
-  font-size: 24rpx;
-  color: #999;
+.due-date { 
+  font-size: 24rpx; 
+  color: #999; 
 }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 80rpx 24rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  margin: 0 24rpx;
+.empty-state { 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding: 80rpx 20rpx; 
+  background: #fff; 
+  margin: 0; 
+  box-sizing: border-box;
+  border-radius: 20rpx; /* 添加圆角 */
 }
 
-.empty-icon {
-  font-size: 100rpx;
-  margin-bottom: 24rpx;
+.empty-icon { 
+  font-size: 100rpx; 
+  margin-bottom: 24rpx; 
 }
 
-.empty-text {
-  font-size: 30rpx;
-  color: #666;
+.empty-text { 
+  font-size: 30rpx; 
+  color: #666; 
 }
