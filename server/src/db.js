@@ -106,7 +106,7 @@ module.exports = {
     },
     findById: (id) => db.notes.find(n => n.id === id),
     findAll: () => db.notes.filter(n => !n.isDeleted),
-    findByUserId: (userId) => db.notes.filter(n => n.userId === userId && !n.isDeleted),
+    findByUserId: (userId) => db.notes.filter(n => n.userId === userId),
     findDeleted: () => db.notes.filter(n => n.isDeleted),
     update: (id, data) => {
       const index = db.notes.findIndex(n => n.id === id);

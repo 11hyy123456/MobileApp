@@ -30,7 +30,7 @@ Page({
       success: async (res) => {
         if (res.confirm) {
           try {
-            await api.notes.delete(e.currentTarget.dataset.id, true);
+            await api.notes.permanentDelete(e.currentTarget.dataset.id);
             showSuccess('删除成功');
             this.loadTrash();
           } catch (error) { showError('删除失败'); }

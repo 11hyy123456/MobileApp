@@ -25,6 +25,8 @@ router.put('/:id', noteController.updateNote);
 
 router.delete('/:id', noteController.deleteNote);
 
+router.delete('/:id/permanent', noteController.permanentDeleteNote);
+
 router.post('/:id/recover', noteController.recoverNote);
 
 router.post('/:id/review', noteController.reviewNote);

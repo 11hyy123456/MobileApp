@@ -156,24 +156,17 @@ exports.deleteNote = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { permanent } = req.query;
 
     const note = Note.findById(id);
     if (!note || note.userId != userId) {
       return res.status(404).json({ code: 404, message: '笔记不存在' });
     }
 
-    if (permanent === 'true') {
-      Note.permanentDelete(id);
-      db.db.noteTags = db.db.noteTags.filter(nt => nt.noteId != id);
-      db.saveDB();
-    } else {
-      Note.softDelete(id);
-    }
+    Note.softDelete(id);
 
     res.json({
       code: 200,
-      message: permanent === 'true' ? '永久删除成功' : '删除成功',
+      message: '删除成功',
       data: null
     });
   } catch (error) {
@@ -197,6 +190,30 @@ exports.recoverNote = async (req, res, next) => {
       code: 200,
       message: '恢复成功',
       data: recoveredNote
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.permanentDeleteNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const note = Note.findById(id);
+    if (!note || note.userId != userId || !note.isDeleted) {
+      return res.status(404).json({ code: 404, message: '回收站笔记不存在' });
+    }
+
+    Note.permanentDelete(id);
+    db.db.noteTags = db.db.noteTags.filter(nt => nt.noteId != id);
+    db.saveDB();
+
+    res.json({
+      code: 200,
+      message: '永久删除成功',
+      data: null
     });
   } catch (error) {
     next(error);
